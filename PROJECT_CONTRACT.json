@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "production_loc": 2300,
+    "production_files": 34,
+    "production_packages": 10,
+    "test_files": 10,
+    "production_functions": 238,
+    "decision_points": 330
+  },
+  "persistence": {
+    "module": "go.etcd.io/bbolt",
+    "entities": ["Case", "CaseFile", "Permission", "FileVersion", "AuditEntry", "ShareLink"],
+    "reopen_test": "TestPersistenceSurvivesReopen"
+  },
+  "workflows": [
+    {
+      "steps": ["create open case", "grant lawyer permission", "upload attachment", "save first version and audit"],
+      "test": "TestWorkflowUploadShareDownload"
+    },
+    {
+      "steps": ["check user permission", "save edited version", "preview latest content", "create and validate share link"],
+      "test": "TestWorkflowThreeEditAndSearch"
+    },
+    {
+      "steps": ["validate archive request", "enumerate case attachments", "mark case and files archived", "return complete archive records"],
+      "test": "TestBusinessChain06"
+    }
+  ]
+}
