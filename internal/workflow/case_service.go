@@ -86,11 +86,15 @@ func (s *Service) ArchiveCase(req domain.ArchiveRequest) (records []domain.CaseF
 		if f.Archived {
 			continue
 		}
-		defer func(file domain.CaseFile) { records = append(records, file) }(f)
 		f.Archived = true
 		if err := s.repo.SaveFile(f); err != nil {
 			return nil, err
 		}
+		// Append the archived copy (Archived=true) in enumeration order so the
+		// returned records stay consistent with the persisted state and the
+		// archived case. The previous defer captured the pre-archive copy and
+		// appended in reverse order, leaving records out of sync with the store.
+		records = append(records, f)
 	}
 	c.Archived = true
 	c.Status = "closed"
